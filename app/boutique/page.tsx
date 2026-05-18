@@ -33,7 +33,6 @@ export default function BoutiquePage() {
       name: product.name,
       price: product.price,
       image: product.image,
-      category: product.category,
     });
     setJustAdded(id);
     setTimeout(() => setJustAdded((prev) => (prev === id ? null : prev)), 1400);
