@@ -70,7 +70,6 @@ export default function CartPage() {
                         <div className="flex items-start justify-between gap-4">
                           <div>
                             <p className="text-[10px] uppercase tracking-widest text-bark mb-1">
-                              {item.category}
                             </p>
                             <h3 className="font-heading text-xl text-cocoa">
                               {item.name}
