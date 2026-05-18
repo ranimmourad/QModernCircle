@@ -1,5 +1,5 @@
 'use client';
-
+import { images } from "@/data/images";
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Lock } from 'lucide-react';

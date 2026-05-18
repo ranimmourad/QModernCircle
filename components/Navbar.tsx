@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import { ShoppingBag, Menu, X } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -18,38 +19,41 @@ export default function Navbar() {
   }, []);
 
   const linkClass =
-    'text-xs uppercase tracking-widest font-light transition-opacity hover:opacity-60';
+    'text-xs uppercase tracking-widest font-medium transition-opacity hover:opacity-70 text-cocoa';
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-cream/95 border-b border-cocoa/10 py-4'
-          : 'bg-transparent py-6'
+          ? 'bg-white/95 shadow-md border-b border-cocoa/10 py-0'
+          : 'bg-white py-0'
       }`}
     >
       <nav className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between">
         {/* Logo */}
-        <Link
-          href="/"
-          className="font-display text-2xl md:text-3xl tracking-widest text-cocoa"
-        >
-          MODERN<span className="italic-accent text-terracotta mx-1">·</span>CIRCLE
+        <Link href="/" className="relative w-20 h-20 md:w-24 md:h-24">
+          <Image
+            src="/logo.jpg"
+            alt="Modern Circle"
+            fill
+            className="object-contain"
+            priority
+          />
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-10">
-          <Link href="/#about" className={linkClass}>
-            About
-          </Link>
-          <Link href="/#menu" className={linkClass}>
+        <div className="hidden md:flex items-center gap-8">
+          <Link href="/menu" className={linkClass}>
             Menu
           </Link>
-          <Link href="/#gallery" className={linkClass}>
+          <Link href="/gallery" className={linkClass}>
             Gallery
           </Link>
           <Link href="/boutique" className={linkClass}>
             Boutique
+          </Link>
+          <Link href="/values" className={linkClass}>
+            Values
           </Link>
           <Link href="/#reserve" className={linkClass}>
             Reserve
@@ -61,7 +65,7 @@ export default function Navbar() {
           >
             <ShoppingBag size={18} strokeWidth={1.25} />
             {totalItems > 0 && (
-              <span className="absolute -top-2 -right-3 text-[10px] bg-cocoa text-cream rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-2 -right-3 text-[10px] bg-cocoa text-white rounded-full w-5 h-5 flex items-center justify-center">
                 {totalItems}
               </span>
             )}
@@ -70,10 +74,14 @@ export default function Navbar() {
 
         {/* Mobile menu button */}
         <div className="md:hidden flex items-center gap-4">
-          <Link href="/cart" className="relative text-cocoa" aria-label="Cart">
+          <Link
+            href="/cart"
+            className="relative text-cocoa"
+            aria-label="Cart"
+          >
             <ShoppingBag size={18} strokeWidth={1.25} />
             {totalItems > 0 && (
-              <span className="absolute -top-2 -right-3 text-[10px] bg-cocoa text-cream rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-2 -right-3 text-[10px] bg-cocoa text-white rounded-full w-5 h-5 flex items-center justify-center">
                 {totalItems}
               </span>
             )}
@@ -94,23 +102,16 @@ export default function Navbar() {
 
       {/* Mobile menu drawer */}
       {menuOpen && (
-        <div className="md:hidden bg-cream border-t border-cocoa/10 px-6 py-8 flex flex-col gap-6">
+        <div className="md:hidden bg-white border-t border-cocoa/10 px-6 py-8 flex flex-col gap-6">
           <Link
-            href="/#about"
-            onClick={() => setMenuOpen(false)}
-            className={linkClass}
-          >
-            About
-          </Link>
-          <Link
-            href="/#menu"
+            href="/menu"
             onClick={() => setMenuOpen(false)}
             className={linkClass}
           >
             Menu
           </Link>
           <Link
-            href="/#gallery"
+            href="/gallery"
             onClick={() => setMenuOpen(false)}
             className={linkClass}
           >
@@ -122,6 +123,13 @@ export default function Navbar() {
             className={linkClass}
           >
             Boutique
+          </Link>
+          <Link
+            href="/values"
+            onClick={() => setMenuOpen(false)}
+            className={linkClass}
+          >
+            Values
           </Link>
           <Link
             href="/#reserve"

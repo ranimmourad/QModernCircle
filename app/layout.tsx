@@ -4,6 +4,7 @@ import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ScrollToTop from '@/components/ScrollToTop';
 
 const italiana = Italiana({
   subsets: ['latin'],
@@ -43,8 +44,9 @@ export default function RootLayout({
       lang="en"
       className={`${italiana.variable} ${cormorant.variable} ${inter.variable}`}
     >
-      <body className="bg-cream text-cocoa font-body antialiased">
+      <body className="font-body bg-cream text-cocoa min-h-screen flex flex-col">
         <CartProvider>
+          <ScrollToTop />
           <Navbar />
           <main className="min-h-screen">{children}</main>
           <Footer />

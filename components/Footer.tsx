@@ -3,13 +3,13 @@ import { Instagram, Facebook, Mail, MapPin, Phone } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-cocoa text-cream/90 mt-32">
+    <footer className="bg-[#3E2723] text-cream/90 mt-32">
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
             <h2 className="font-display text-4xl tracking-widest mb-6">
-              MODERN<span className="italic-accent text-terracotta mx-1">·</span>CIRCLE
+              Modern<span className="italic-accent text-terracotta mx-1"></span>Circle
             </h2>
             <p className="font-heading italic text-cream/70 text-lg max-w-md leading-relaxed">
               A quiet coffee sanctuary and concept store — where slow living,

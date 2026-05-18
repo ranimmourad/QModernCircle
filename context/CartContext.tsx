@@ -1,25 +1,18 @@
-'use client';
+"use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export interface CartItem {
   id: string;
   name: string;
   price: number;
-  image: string;
-  category: string;
   quantity: number;
+  image?: string;
 }
 
-interface CartContextValue {
+interface CartContextType {
   items: CartItem[];
-  addToCart: (item: Omit<CartItem, 'quantity'>) => void;
+  addToCart: (item: Omit<CartItem, "quantity">) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -27,46 +20,46 @@ interface CartContextValue {
   totalPrice: number;
 }
 
-const CartContext = createContext<CartContextValue | undefined>(undefined);
-
-const STORAGE_KEY = 'modern-circle-cart';
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  // ALWAYS initialize as an empty array to prevent .reduce() crashes
   const [items, setItems] = useState<CartItem[]>([]);
-  const [hydrated, setHydrated] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Load from localStorage on mount
+  // Safely load from localStorage ONLY after the page mounts
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem("modern-circle-cart");
       if (stored) {
-        setItems(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        // Double-check that it's actually an array
+        if (Array.isArray(parsed)) {
+          setItems(parsed);
+        }
       }
-    } catch (e) {
-      // ignore
+    } catch (error) {
+      console.error("Failed to load cart from localStorage", error);
     }
-    setHydrated(true);
+    setIsHydrated(true);
   }, []);
 
-  // Persist to localStorage
+  // Save to localStorage whenever items change (and hydrated)
   useEffect(() => {
-    if (!hydrated) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    } catch (e) {
-      // ignore
+    if (isHydrated) {
+      localStorage.setItem("modern-circle-cart", JSON.stringify(items));
     }
-  }, [items, hydrated]);
+  }, [items, isHydrated]);
 
-  const addToCart = (item: Omit<CartItem, 'quantity'>) => {
+  const addToCart = (newItem: Omit<CartItem, "quantity">) => {
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
+      const existing = prev.find((i) => i.id === newItem.id);
       if (existing) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === newItem.id ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
-      return [...prev, { ...item, quantity: 1 }];
+      return [...prev, { ...newItem, quantity: 1 }];
     });
   };
 
@@ -86,6 +79,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => setItems([]);
 
+  // These will NEVER crash now because items is guaranteed to be an array
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const totalPrice = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
@@ -107,9 +101,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 }
 
 export function useCart() {
-  const ctx = useContext(CartContext);
-  if (!ctx) {
-    throw new Error('useCart must be used within a CartProvider');
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error("useCart must be used within a CartProvider");
   }
-  return ctx;
+  return context;
 }

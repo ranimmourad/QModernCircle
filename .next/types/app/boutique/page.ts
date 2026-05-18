@@ -1,4 +1,4 @@
-// File: /home/user/webapp/app/boutique/page.tsx
+// File: /Users/macbook/Downloads/ModernCircle/app/boutique/page.tsx
 import * as entry from '../../../../app/boutique/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
