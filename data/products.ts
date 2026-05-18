@@ -87,7 +87,7 @@ export const products: Product[] = [
     id: 'bs-03',
     name: 'Neroli Body Balm',
     price: 64,
-    image: 'https://picsum.photos/seed/moderncircle203/800/1000',
+    image: 'skincare2.jpg',
     category: 'Beauty/Skincare',
     inStock: true,
     description: 'Whipped shea butter with Tunisian neroli. 100ml.',
