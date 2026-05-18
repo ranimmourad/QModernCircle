@@ -95,8 +95,8 @@ function FadeUp({ children, delay = 0, className = "" }: { children: React.React
 // ---------- PAGE ----------
 export default function HomePage() {
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
 
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -114,10 +114,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 md:gap-24 items-center">
           <FadeUp>
             <div className="relative h-[500px] md:h-[600px] overflow-hidden">
-              <div
-                className="w-full h-full bg-cover"
-                style={{ backgroundImage: "url('/facade.jpg')", backgroundPosition: "80% center" }}
-              />
+              <div className="w-full h-full bg-cover" style={{ backgroundImage: "url('/facade.jpg')", backgroundPosition: "left center" }} />
             </div>
           </FadeUp>
 
