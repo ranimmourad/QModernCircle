@@ -105,7 +105,7 @@ export default function HomePage() {
       {/* ========== HERO ========== */}
       <section ref={heroRef} className="relative w-full min-h-[100dvh] h-screen overflow-hidden bg-[#3E2723]">
         <motion.div style={{ y: heroY }} className="absolute inset-0">
-          <div className="absolute inset-0 bg-no-repeat bg-contain bg-center md:bg-cover" style={{ backgroundImage: "url('/hero.jpg')" }} />
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/hero.jpg')" }} />
               </motion.div>
       </section>
 
