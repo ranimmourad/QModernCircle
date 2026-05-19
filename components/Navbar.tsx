@@ -23,20 +23,18 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-white/95 shadow-md border-b border-cocoa/10 py-0'
-          : 'bg-white py-0'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white py-0 ${
+        scrolled ? 'shadow-md border-b border-cocoa/10' : ''
       }`}
     >
       <nav className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="relative w-20 h-20 md:w-24 md:h-24">
+        <Link href="/" className="flex items-center">
           <Image
             src="/logo.jpg"
             alt="Modern Circle"
-            fill
-            className="object-contain"
+            width={128}
+            height={56}
+            className="h-16 w-auto md:h-20 object-contain"
             priority
           />
         </Link>
