@@ -103,10 +103,13 @@ export default function HomePage() {
   return (
     <>
       {/* ========== HERO ========== */}
-      <section ref={heroRef} className="relative w-full aspect-video md:h-screen overflow-hidden bg-[#3E2723]">
-        <motion.div style={{ y: heroY }} className="absolute top-14 left-0 right-0 bottom-[-56px] md:inset-0">
+      <section ref={heroRef} className="relative pt-14 md:pt-0 bg-[#3E2723] overflow-hidden">
+        {/* Desktop: Full screen parallax */}
+        <motion.div style={{ y: heroY }} className="hidden md:block absolute inset-0">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/hero.jpg')" }} />
-              </motion.div>
+        </motion.div>
+        {/* Mobile: Standard flow so navbar doesn't overlap */}
+        <div className="md:hidden w-full aspect-video bg-cover bg-center" style={{ backgroundImage: "url('/hero.jpg')" }} />
       </section>
 
       {/* ========== ABOUT ========== */}
