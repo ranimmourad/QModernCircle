@@ -103,7 +103,7 @@ export default function HomePage() {
   return (
     <>
       {/* ========== HERO ========== */}
-      <section ref={heroRef} className="relative pt-14 md:pt-0 bg-[#3E2723] overflow-hidden">
+      <section ref={heroRef} className="relative pt-14 md:pt-0 md:h-screen bg-[#3E2723] overflow-hidden">
         {/* Desktop: Full screen parallax */}
         <motion.div style={{ y: heroY }} className="hidden md:block absolute inset-0">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/hero.jpg')" }} />
