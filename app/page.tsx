@@ -115,12 +115,6 @@ export default function HomePage() {
       {/* ========== ABOUT ========== */}
       <section id="about" className="py-32 px-6 md:px-10">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 md:gap-24 items-center">
-          <FadeUp>
-            <div className="relative h-[500px] md:h-[600px] overflow-hidden">
-              <div className="w-full h-full bg-cover" style={{ backgroundImage: "url('/facade.jpg')", backgroundPosition: "left center" }} />
-            </div>
-          </FadeUp>
-
           <FadeUp delay={0.2}>
             <p className="text-xs uppercase tracking-widest text-bark mb-6">Our Story</p>
             <h2 className="font-display text-5xl md:text-6xl tracking-wider leading-tight text-cocoa">
@@ -144,6 +138,40 @@ export default function HomePage() {
                 <p className="font-display text-4xl md:text-5xl text-cocoa"><AnimatedCounter to={100} suffix="%" /></p>
                 <p className="text-xs uppercase tracking-widest text-bark mt-2">Handmade</p>
               </div>
+            </div>
+          </FadeUp>
+
+          {/* TEXT (Shows first on mobile) */}
+          <FadeUp delay={0.2}>
+            <p className="text-xs uppercase tracking-widest text-bark mb-6">Our Story</p>
+            <h2 className="font-display text-5xl md:text-6xl tracking-wider leading-tight text-cocoa">
+              A quieter<br />way to gather.
+            </h2>
+            <p className="font-heading italic text-2xl text-bark mt-6">Coffee, craft, and conversation — without the noise.</p>
+            <p className="mt-8 text-bark leading-loose">
+              Modern Circle began as a small idea: a calm, non-smoking space in El Mourouj where mornings feel unhurried, work feels possible, and every object on the shelf has been chosen with care. Six years on, it remains exactly that — a sanctuary for slow days and handmade things.
+            </p>
+
+            <div className="grid grid-cols-3 gap-6 mt-12 pt-12 border-t border-cocoa/10">
+              <div>
+                <p className="font-display text-4xl md:text-5xl text-cocoa"><AnimatedCounter to={6} suffix="+" /></p>
+                <p className="text-xs uppercase tracking-widest text-bark mt-2">Years Open</p>
+              </div>
+              <div>
+                <p className="font-display text-4xl md:text-5xl text-cocoa"><AnimatedCounter to={32} /></p>
+                <p className="text-xs uppercase tracking-widest text-bark mt-2">Artisans</p>
+              </div>
+              <div>
+                <p className="font-display text-4xl md:text-5xl text-cocoa"><AnimatedCounter to={100} suffix="%" /></p>
+                <p className="text-xs uppercase tracking-widest text-bark mt-2">Handmade</p>
+              </div>
+            </div>
+          </FadeUp>
+
+          {/* IMAGE (Shows second on mobile) */}
+          <FadeUp delay={0.4}>
+            <div className="relative h-[500px] md:h-[600px] overflow-hidden">
+              <div className="w-full h-full bg-cover" style={{ backgroundImage: "url('/facade.jpg')", backgroundPosition: "left center" }} />
             </div>
           </FadeUp>
         </div>
