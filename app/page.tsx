@@ -103,7 +103,7 @@ export default function HomePage() {
   return (
     <>
       {/* ========== HERO ========== */}
-      <section ref={heroRef} className="relative w-full aspect-video md:h-screen overflow-hidden bg-[#3E2723]">
+      <section ref={heroRef} className="relative w-full aspect-video md:h-screen overflow-hidden bg-[#3E2723] pt-14 md:pt-0">
         <motion.div style={{ y: heroY }} className="absolute inset-0">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/hero.jpg')" }} />
               </motion.div>
