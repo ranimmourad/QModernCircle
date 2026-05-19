@@ -115,32 +115,7 @@ export default function HomePage() {
       {/* ========== ABOUT ========== */}
       <section id="about" className="py-32 px-6 md:px-10">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 md:gap-24 items-center">
-          <FadeUp delay={0.2}>
-            <p className="text-xs uppercase tracking-widest text-bark mb-6">Our Story</p>
-            <h2 className="font-display text-5xl md:text-6xl tracking-wider leading-tight text-cocoa">
-              A quieter<br />way to gather.
-            </h2>
-            <p className="font-heading italic text-2xl text-bark mt-6">Coffee, craft, and conversation — without the noise.</p>
-            <p className="mt-8 text-bark leading-loose">
-              Modern Circle began as a small idea: a calm, non-smoking space in El Mourouj where mornings feel unhurried, work feels possible, and every object on the shelf has been chosen with care. Six years on, it remains exactly that — a sanctuary for slow days and handmade things.
-            </p>
-
-            <div className="grid grid-cols-3 gap-6 mt-12 pt-12 border-t border-cocoa/10">
-              <div>
-                <p className="font-display text-4xl md:text-5xl text-cocoa"><AnimatedCounter to={6} suffix="+" /></p>
-                <p className="text-xs uppercase tracking-widest text-bark mt-2">Years Open</p>
-              </div>
-              <div>
-                <p className="font-display text-4xl md:text-5xl text-cocoa"><AnimatedCounter to={32} /></p>
-                <p className="text-xs uppercase tracking-widest text-bark mt-2">Artisans</p>
-              </div>
-              <div>
-                <p className="font-display text-4xl md:text-5xl text-cocoa"><AnimatedCounter to={100} suffix="%" /></p>
-                <p className="text-xs uppercase tracking-widest text-bark mt-2">Handmade</p>
-              </div>
-            </div>
-          </FadeUp>
-
+          
           {/* TEXT (Shows first on mobile) */}
           <FadeUp delay={0.2}>
             <p className="text-xs uppercase tracking-widest text-bark mb-6">Our Story</p>
@@ -174,6 +149,7 @@ export default function HomePage() {
               <div className="w-full h-full bg-cover" style={{ backgroundImage: "url('/facade.jpg')", backgroundPosition: "left center" }} />
             </div>
           </FadeUp>
+
         </div>
       </section>
 
@@ -220,7 +196,7 @@ export default function HomePage() {
       {/* ========== WORK-FRIENDLY PARALLAX ========== */}
       <section className="relative h-[70vh] overflow-hidden bg-[#3E2723]">
         <div className="parallax-bg absolute inset-0" style={{ backgroundImage: "url('/workspace.jpg')" }} />
-            <div className="relative z-10 h-full flex items-center justify-center px-6">
+        <div className="relative z-10 h-full flex items-center justify-center px-6">
           <FadeUp className="text-center max-w-3xl">
             <p className="text-xs uppercase tracking-widest text-cream/70 mb-6">A Space For Quiet Work</p>
             <h2 className="font-display text-5xl md:text-7xl tracking-wider text-cream leading-tight">
