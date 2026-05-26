@@ -1,5 +1,10 @@
 {
+  "/page": "app/page.js",
   "/admin/[slug]/page": "app/admin/[slug]/page.js",
+  "/api/menu/route": "app/api/menu/route.js",
+  "/api/admin/menu-items/route": "app/api/admin/menu-items/route.js",
   "/boutique/page": "app/boutique/page.js",
-  "/page": "app/page.js"
+  "/api/reviews/route": "app/api/reviews/route.js",
+  "/api/products/route": "app/api/products/route.js",
+  "/api/admin/products/route": "app/api/admin/products/route.js"
 }

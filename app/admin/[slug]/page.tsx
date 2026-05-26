@@ -68,10 +68,12 @@ export default function AdminDashboardPage({ params }: { params: { slug: string 
     setSubmitting(true); setError(null);
     try {
       const isEditing = !!editingProduct;
+      const payload: any = { ...productForm, price: Number(productForm.price) };
+      if (isEditing) payload.id = editingProduct; // Only attach ID if editing
       const res = await fetch('/api/admin/products', {
         method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json', 'x-admin-secret': ADMIN_SECRET },
-        body: JSON.stringify({ ...productForm, price: Number(productForm.price), id: editingProduct }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error); }
       setProductForm(emptyProductForm); setEditingProduct(null);
