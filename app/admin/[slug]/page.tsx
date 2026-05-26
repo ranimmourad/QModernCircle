@@ -2,6 +2,7 @@
 
 import { useEffect, useState, FormEvent } from 'react';
 import { notFound } from 'next/navigation';
+import { Search } from 'lucide-react';
 
 const ADMIN_SECRET = '849204';
 
@@ -16,7 +17,8 @@ interface Item {
   created_at: string;
 }
 
-const emptyForm = { name: '', price: '', image: '', category: '', description: '', in_stock: true };
+const emptyProductForm = { name: '', price: '', image: '', category: '', description: '', in_stock: true };
+const emptyMenuForm = { name: '', price: '', image: '', category: '', description: '' };
 
 export default function AdminDashboardPage({ params }: { params: { slug: string } }) {
   if (params.slug !== ADMIN_SECRET) notFound();
@@ -27,11 +29,17 @@ export default function AdminDashboardPage({ params }: { params: { slug: string 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [productForm, setProductForm] = useState(emptyForm);
-  const [menuForm, setMenuForm] = useState(emptyForm);
+  const [productForm, setProductForm] = useState(emptyProductForm);
+  const [menuForm, setMenuForm] = useState(emptyMenuForm);
   
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [editingMenu, setEditingMenu] = useState<string | null>(null);
+
+  // Search & Filter States
+  const [productQuery, setProductQuery] = useState('');
+  const [productFilter, setProductFilter] = useState('All');
+  const [menuQuery, setMenuQuery] = useState('');
+  const [menuFilter, setMenuFilter] = useState('All');
 
   const fetchAll = async () => {
     setLoading(true);
@@ -66,7 +74,7 @@ export default function AdminDashboardPage({ params }: { params: { slug: string 
         body: JSON.stringify({ ...productForm, price: Number(productForm.price), id: editingProduct }),
       });
       if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error); }
-      setProductForm(emptyForm); setEditingProduct(null);
+      setProductForm(emptyProductForm); setEditingProduct(null);
       await fetchAll();
     } catch (e: any) { setError(e.message); } finally { setSubmitting(false); }
   };
@@ -76,15 +84,22 @@ export default function AdminDashboardPage({ params }: { params: { slug: string 
     setSubmitting(true); setError(null);
     try {
       const isEditing = !!editingMenu;
-      // Remove in_stock so Supabase doesn't crash (menu_items table doesn't have that column)
-      const { in_stock, ...menuPayload } = menuForm; 
+      const payload: any = {
+        name: menuForm.name,
+        price: Number(menuForm.price),
+        image: menuForm.image,
+        category: menuForm.category,
+        description: menuForm.description,
+      };
+      if (isEditing) payload.id = editingMenu;
+
       const res = await fetch('/api/admin/menu-items', {
         method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json', 'x-admin-secret': ADMIN_SECRET },
-        body: JSON.stringify({ ...menuPayload, price: Number(menuPayload.price), id: editingMenu }),
+        body: JSON.stringify(payload),
       });
-      if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error); }
-      setMenuForm(emptyForm); setEditingMenu(null);
+      if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.error || `Failed to add`); }
+      setMenuForm(emptyMenuForm); setEditingMenu(null);
       await fetchAll();
     } catch (e: any) { setError(e.message); } finally { setSubmitting(false); }
   };
@@ -99,19 +114,33 @@ export default function AdminDashboardPage({ params }: { params: { slug: string 
     } catch (e: any) { setError(e.message); }
   };
 
-  // FIXED: Boutique scrolls to top
   const editProduct = (p: Item) => {
     setEditingProduct(p.id);
     setProductForm({ name: p.name, price: String(p.price), image: p.image || '', category: p.category || '', description: p.description || '', in_stock: p.in_stock ?? true });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // FIXED: Menu scrolls to menu section
   const editMenu = (m: Item) => {
     setEditingMenu(m.id);
-    setMenuForm({ name: m.name, price: String(m.price), image: m.image || '', category: m.category || '', description: m.description || '', in_stock: true });
+    setMenuForm({ name: m.name, price: String(m.price), image: m.image || '', category: m.category || '', description: m.description || '' });
     document.getElementById('menu-section')?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // Filtering Logic
+  const productCategories = ['All', ...Array.from(new Set(products.map(p => p.category).filter(Boolean) as string[]))];
+  const menuCategories = ['All', ...Array.from(new Set(menuItems.map(m => m.category).filter(Boolean) as string[]))];
+
+  const filteredProducts = products.filter((p) => {
+    const matchCat = productFilter === 'All' || p.category === productFilter;
+    const matchQuery = p.name.toLowerCase().includes(productQuery.toLowerCase()) || (p.description && p.description.toLowerCase().includes(productQuery.toLowerCase()));
+    return matchCat && matchQuery;
+  });
+
+  const filteredMenu = menuItems.filter((m) => {
+    const matchCat = menuFilter === 'All' || m.category === menuFilter;
+    const matchQuery = m.name.toLowerCase().includes(menuQuery.toLowerCase()) || (m.description && m.description.toLowerCase().includes(menuQuery.toLowerCase()));
+    return matchCat && matchQuery;
+  });
 
   return (
     <section className="min-h-screen bg-cream pt-32 pb-24 px-6 md:px-10">
@@ -142,16 +171,31 @@ export default function AdminDashboardPage({ params }: { params: { slug: string 
             <div className="md:col-span-2 flex items-center gap-6">
               <div className="flex items-center gap-3"><input id="p-stock" type="checkbox" checked={productForm.in_stock} onChange={e => setProductForm({...productForm, in_stock: e.target.checked})} className="accent-cocoa" /><label htmlFor="p-stock" className="text-xs uppercase tracking-widest text-bark">In stock</label></div>
               <button type="submit" disabled={submitting} className="px-10 py-3 bg-cocoa text-cream text-xs uppercase tracking-widest hover:bg-terracotta transition-colors duration-500 disabled:opacity-50">{submitting ? 'Saving...' : editingProduct ? 'Update Product' : 'Add Product'}</button>
-              {editingProduct && <button type="button" onClick={() => { setEditingProduct(null); setProductForm(emptyForm); }} className="text-xs uppercase tracking-widest text-bark underline">Cancel</button>}
+              {editingProduct && <button type="button" onClick={() => { setEditingProduct(null); setProductForm(emptyProductForm); }} className="text-xs uppercase tracking-widest text-bark underline">Cancel</button>}
             </div>
           </form>
+
+          {/* Search & Filter for Products */}
+          {!loading && products.length > 0 && (
+            <div className="mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center">
+              <div className="relative w-full md:w-72">
+                <Search size={14} strokeWidth={1.25} className="absolute left-0 top-1/2 -translate-y-1/2 text-bark" />
+                <input type="text" placeholder="Search products..." value={productQuery} onChange={e => setProductQuery(e.target.value)} className="w-full bg-transparent border-b border-cocoa/20 pl-6 pr-2 py-2 text-sm text-cocoa placeholder-bark/60 focus:border-cocoa focus:outline-none" />
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {productCategories.map(cat => (
+                  <button key={cat} onClick={() => setProductFilter(cat)} className={`px-3 py-1 text-[10px] uppercase tracking-widest border transition-colors ${productFilter === cat ? 'bg-cocoa text-cream border-cocoa' : 'border-cocoa/20 text-bark hover:border-cocoa'}`}>{cat}</button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {loading ? <p className="text-bark italic-accent">Loading products...</p> : (
             <div className="border border-cocoa/15">
               <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-3 text-[10px] uppercase tracking-widest text-bark border-b border-cocoa/15 bg-cocoa/5">
                 <div className="col-span-1">Img</div><div className="col-span-3">Name</div><div className="col-span-3">Category</div><div className="col-span-2">Price</div><div className="col-span-2">Stock</div><div className="col-span-1 text-right">—</div>
               </div>
-              {products.map((p) => (
+              {filteredProducts.length === 0 ? <p className="p-4 text-sm text-bark italic-accent">No products match your search.</p> : filteredProducts.map((p) => (
                 <div key={p.id} className="grid grid-cols-12 gap-4 items-center px-4 py-4 border-b border-cocoa/10 last:border-b-0">
                   <div className="col-span-2 md:col-span-1">{p.image ? <img src={p.image} alt={p.name} className="w-12 h-12 object-cover bg-cocoa/10" /> : <div className="w-12 h-12 bg-cocoa/10" />}</div>
                   <div className="col-span-10 md:col-span-3"><p className="font-heading text-lg text-cocoa leading-tight">{p.name}</p><p className="text-xs text-bark line-clamp-1">{p.description}</p></div>
@@ -169,7 +213,6 @@ export default function AdminDashboardPage({ params }: { params: { slug: string 
         </div>
 
         {/* --- MENU ITEMS SECTION --- */}
-        {/* FIXED: Added id="menu-section" here */}
         <div id="menu-section" className="border border-cocoa/15 p-6 md:p-8 bg-white/40">
           <h2 className="font-heading text-3xl text-cocoa mb-6">
             {editingMenu ? 'Edit Menu Item' : 'Add Menu Item (Drinks & Desserts)'}
@@ -184,16 +227,31 @@ export default function AdminDashboardPage({ params }: { params: { slug: string 
             <div className="md:col-span-2"><label className="block text-xs uppercase tracking-widest text-bark mb-2">Description</label><textarea rows={2} value={menuForm.description} onChange={e => setMenuForm({...menuForm, description: e.target.value})} className="w-full bg-transparent border-b border-cocoa/30 py-2 text-cocoa focus:border-cocoa focus:outline-none resize-none" /></div>
             <div className="md:col-span-2 flex items-center gap-6">
               <button type="submit" disabled={submitting} className="px-10 py-3 bg-cocoa text-cream text-xs uppercase tracking-widest hover:bg-terracotta transition-colors duration-500 disabled:opacity-50">{submitting ? 'Saving...' : editingMenu ? 'Update Menu Item' : 'Add Menu Item'}</button>
-              {editingMenu && <button type="button" onClick={() => { setEditingMenu(null); setMenuForm(emptyForm); }} className="text-xs uppercase tracking-widest text-bark underline">Cancel</button>}
+              {editingMenu && <button type="button" onClick={() => { setEditingMenu(null); setMenuForm(emptyMenuForm); }} className="text-xs uppercase tracking-widest text-bark underline">Cancel</button>}
             </div>
           </form>
+
+          {/* Search & Filter for Menu */}
+          {!loading && menuItems.length > 0 && (
+            <div className="mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center">
+              <div className="relative w-full md:w-72">
+                <Search size={14} strokeWidth={1.25} className="absolute left-0 top-1/2 -translate-y-1/2 text-bark" />
+                <input type="text" placeholder="Search menu..." value={menuQuery} onChange={e => setMenuQuery(e.target.value)} className="w-full bg-transparent border-b border-cocoa/20 pl-6 pr-2 py-2 text-sm text-cocoa placeholder-bark/60 focus:border-cocoa focus:outline-none" />
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {menuCategories.map(cat => (
+                  <button key={cat} onClick={() => setMenuFilter(cat)} className={`px-3 py-1 text-[10px] uppercase tracking-widest border transition-colors ${menuFilter === cat ? 'bg-cocoa text-cream border-cocoa' : 'border-cocoa/20 text-bark hover:border-cocoa'}`}>{cat}</button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {loading ? <p className="text-bark italic-accent">Loading menu...</p> : (
             <div className="border border-cocoa/15">
               <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-3 text-[10px] uppercase tracking-widest text-bark border-b border-cocoa/15 bg-cocoa/5">
                 <div className="col-span-1">Img</div><div className="col-span-4">Name</div><div className="col-span-2">Category</div><div className="col-span-2">Price</div><div className="col-span-2">Desc</div><div className="col-span-1 text-right">—</div>
               </div>
-              {menuItems.map((m) => (
+              {filteredMenu.length === 0 ? <p className="p-4 text-sm text-bark italic-accent">No menu items match your search.</p> : filteredMenu.map((m) => (
                 <div key={m.id} className="grid grid-cols-12 gap-4 items-center px-4 py-4 border-b border-cocoa/10 last:border-b-0">
                   <div className="col-span-2 md:col-span-1">{m.image ? <img src={m.image} alt={m.name} className="w-12 h-12 object-cover bg-cocoa/10" /> : <div className="w-12 h-12 bg-cocoa/10" />}</div>
                   <div className="col-span-10 md:col-span-4 font-heading text-lg text-cocoa">{m.name}</div>
