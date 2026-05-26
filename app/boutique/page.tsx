@@ -1,18 +1,48 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Check } from 'lucide-react';
-import { products, categories, ProductCategory } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 
-type Filter = 'All' | ProductCategory;
+// This now matches exactly what Supabase sends
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  in_stock: boolean;
+  description: string;
+}
+
+type Filter = 'All' | string;
 
 export default function BoutiquePage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  
   const [filter, setFilter] = useState<Filter>('All');
   const [query, setQuery] = useState('');
   const [justAdded, setJustAdded] = useState<string | null>(null);
   const { addToCart } = useCart();
+
+  // Fetch live data from Supabase
+  useEffect(() => {
+    fetch('/api/products', { cache: 'no-store' })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setProducts(data);
+          // Automatically grab categories from the database
+          const uniqueCats = Array.from(new Set(data.map((p: Product) => p.category).filter(Boolean))) as string[];
+          setCategories(uniqueCats);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
@@ -20,14 +50,14 @@ export default function BoutiquePage() {
       const matchesQuery =
         query.trim() === '' ||
         p.name.toLowerCase().includes(query.toLowerCase()) ||
-        p.description.toLowerCase().includes(query.toLowerCase());
+        (p.description && p.description.toLowerCase().includes(query.toLowerCase()));
       return matchesCategory && matchesQuery;
     });
-  }, [filter, query]);
+  }, [filter, query, products]);
 
   const handleAdd = (id: string) => {
     const product = products.find((p) => p.id === id);
-    if (!product || !product.inStock) return;
+    if (!product || !product.in_stock) return;
     addToCart({
       id: product.id,
       name: product.name,
@@ -37,6 +67,14 @@ export default function BoutiquePage() {
     setJustAdded(id);
     setTimeout(() => setJustAdded((prev) => (prev === id ? null : prev)), 1400);
   };
+
+  if (loading) {
+    return (
+      <section className="pt-40 pb-16 px-6 md:px-10 text-center">
+        <p className="font-heading italic text-2xl text-bark animate-pulse">Loading the boutique...</p>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -156,16 +194,16 @@ export default function BoutiquePage() {
                         src={p.image}
                         alt={p.name}
                         className={`w-full h-full object-cover transition-opacity duration-700 ${
-                          p.inStock ? 'group-hover:opacity-90' : 'opacity-60'
+                          p.in_stock ? 'group-hover:opacity-90' : 'opacity-60'
                         }`}
                       />
-                      {!p.inStock && (
+                      {!p.in_stock && (
                         <div className="absolute top-3 left-3 bg-cream px-3 py-1 text-[10px] uppercase tracking-widest text-bark border border-cocoa/15">
                           Sold Out
                         </div>
                       )}
                       <div className="absolute top-3 right-3 text-[10px] uppercase tracking-widest text-bark/70">
-                        {p.category.split(' ')[0]}
+                        {p.category ? p.category.split(' ')[0] : ''}
                       </div>
                     </div>
 
@@ -184,18 +222,18 @@ export default function BoutiquePage() {
                         </span>
                         <span
                           className={`text-[10px] uppercase tracking-widest ${
-                            p.inStock ? 'text-olive' : 'text-bark/60'
+                            p.in_stock ? 'text-olive' : 'text-bark/60'
                           }`}
                         >
-                          {p.inStock ? 'In Stock' : 'Out of Stock'}
+                          {p.in_stock ? 'In Stock' : 'Out of Stock'}
                         </span>
                       </div>
 
                       <button
                         onClick={() => handleAdd(p.id)}
-                        disabled={!p.inStock}
+                        disabled={!p.in_stock}
                         className={`mt-4 w-full py-3 text-[11px] uppercase tracking-widest border transition-colors duration-400 flex items-center justify-center gap-2 ${
-                          !p.inStock
+                          !p.in_stock
                             ? 'border-cocoa/15 text-bark/40 cursor-not-allowed'
                             : justAdded === p.id
                             ? 'border-olive bg-olive text-cream'
@@ -207,7 +245,7 @@ export default function BoutiquePage() {
                             <Check size={14} strokeWidth={1.5} />
                             Added
                           </>
-                        ) : p.inStock ? (
+                        ) : p.in_stock ? (
                           'Add to Cart'
                         ) : (
                           'Unavailable'
