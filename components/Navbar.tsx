@@ -19,7 +19,7 @@ export default function Navbar() {
   }, []);
 
   const linkClass =
-    'text-xs uppercase tracking-widest font-medium transition-opacity hover:opacity-70 text-cocoa';
+    'text-sm uppercase tracking-widest font-medium transition-opacity hover:opacity-70 text-cocoa';
 
   return (
     <header
