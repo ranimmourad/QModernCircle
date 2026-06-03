@@ -106,25 +106,10 @@ export default function Footer() {
         </div>
 
         {/* Bottom strip */}
-        <div className="mt-16 pt-8 border-t border-cream/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-16 pt-8 border-t border-cream/10 flex items-center justify-center">
           <p className="text-xs font-light text-cream/50 tracking-wide">
             © {new Date().getFullYear()} Modern Circle · Handmade, heartmade.
           </p>
-          <div className="flex items-center gap-6 text-xs font-light text-cream/50 tracking-widest uppercase">
-            <Link
-              href="/admin-login"
-              className="hover:text-terracotta transition-colors"
-            >
-              Admin Login
-            </Link>
-            <span className="opacity-30">·</span>
-            <Link
-              href="/employee-login"
-              className="hover:text-terracotta transition-colors"
-            >
-              Employee Login
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
