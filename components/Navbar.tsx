@@ -23,7 +23,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white py-2 md:py-3 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white py-1.5 md:py-2 ${
         scrolled ? 'shadow-md border-b border-cocoa/10' : ''
       }`}
     >
