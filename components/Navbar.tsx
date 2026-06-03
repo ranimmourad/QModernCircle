@@ -23,7 +23,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white py-5 md:py-6 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white py-3 md:py-4 ${
         scrolled ? 'shadow-md border-b border-cocoa/10' : ''
       }`}
     >
@@ -32,9 +32,9 @@ export default function Navbar() {
           <Image
             src="/logo.jpg"
             alt="Modern Circle"
-            width={180}
-            height={80}
-            className="h-20 w-auto md:h-28 object-contain"
+            width={148}
+            height={64}
+            className="h-[72px] w-auto md:h-24 object-contain"
             priority
           />
         </Link>
